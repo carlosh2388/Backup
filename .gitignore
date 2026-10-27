@@ -1,0 +1,12 @@
+# Otras sedes (solo se versiona Escuintla)
+/sedes/
+/server_prod/
+/Gineco/
+
+# Dependencias y builds
+node_modules/
+.next/
+
+# Secretos y logs
+.env*
+*.log

@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup Centro de Mando</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* MOCKUP · Centro de mando (UI/UX Pro Max: Real-Time Operations + Bento Grid + Dark Mode OLED).
+   Datos de ejemplo. Verde operativo, rojo incidente, ámbar advertencia, gris sin respuesta. */
+:root {
+  --bg: #070B14; --panel: #0E1524; --panel-2: #131C2F; --muted: #1C2740; --line: #24314D; --line-2: #33456B;
+  --fg: #F1F5F9; --fg-2: #CBD5E1; --fg-3: #8A9BB7;
+  --ok: #22C55E; --ok-bg: rgba(34,197,94,.13); --ok-fg: #86EFAC;
+  --warn: #F59E0B; --warn-bg: rgba(245,158,11,.14); --warn-fg: #FCD34D;
+  --crit: #EF4444; --crit-bg: rgba(239,68,68,.15); --crit-fg: #FCA5A5;
+  --info: #60A5FA; --info-bg: rgba(96,165,250,.14); --info-fg: #BFDBFE;
+  --off: #64748B; --off-bg: rgba(100,116,139,.2); --off-fg: #CBD5E1;
+  --brand: #3B82F6; --ring: #93C5FD;
+  --font: "Fira Sans", system-ui, "Segoe UI", sans-serif; --mono: "Fira Code", ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.45 var(--font); -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.icon { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.marca-mockup { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 99; background: #7C3AED; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .08em; padding: 4px 12px; border-radius: 999px; }
+
+/* Barra superior */
+.top { display: flex; align-items: center; gap: 16px; padding: 14px 24px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #0B1220, var(--bg)); }
+.logo { width: 34px; height: 34px; border-radius: 9px; background: var(--brand); display: grid; place-items: center; }
+.top h1 { margin: 0; font-size: 16px; } .top p { margin: 0; font-size: 12px; color: var(--fg-3); }
+.top .der { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.vivo { display: inline-flex; gap: 8px; align-items: center; padding: 6px 12px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); font-size: 12px; color: var(--fg-2); }
+.vivo i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px var(--ok-bg); animation: latido 2s ease-in-out infinite; }
+@keyframes latido { 50% { box-shadow: 0 0 0 6px transparent; } }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--panel); cursor: pointer; font-size: 13px; color: var(--fg); text-decoration: none; white-space: nowrap; }
+.btn:hover { background: var(--panel-2); }
+.btn.on { background: var(--brand); border-color: var(--brand); }
+
+main { padding: 16px 24px 32px; max-width: 1760px; margin: 0 auto; }
+
+/* 1. Banda de estado: responde "¿hay algo que atender?" */
+.estado { display: flex; align-items: center; gap: 18px; padding: 16px 20px; border-radius: 14px; background: linear-gradient(90deg, rgba(239,68,68,.18), rgba(239,68,68,.04) 60%); border: 1px solid rgba(239,68,68,.35); }
+.estado .grande { width: 46px; height: 46px; border-radius: 50%; background: var(--crit); display: grid; place-items: center; flex: none; }
+.estado .grande .icon { width: 24px; height: 24px; color: #fff; }
+.estado h2 { margin: 0; font-size: 20px; }
+.estado p { margin: 2px 0 0; color: var(--fg-2); }
+.pendientes { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.pend { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel); cursor: pointer; text-align: left; }
+.pend:hover { border-color: var(--fg-3); }
+.pend b { font-weight: 600; } .pend small { display: block; color: var(--fg-3); font-size: 12px; }
+.pend.crit { border-color: rgba(239,68,68,.5); } .pend.off { border-color: rgba(100,116,139,.6); }
+
+/* 2. Mosaico */
+.bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; min-width: 0; }
+.tile h3 { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); display: flex; align-items: center; gap: 8px; }
+.tile h3 .der { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 500; }
+.c-mapa { grid-column: span 5; grid-row: span 2; }
+.c-kpi { grid-column: span 4; }
+.c-feed { grid-column: span 3; grid-row: span 2; display: flex; flex-direction: column; }
+.c-lista { grid-column: span 4; }
+.c-detalle { grid-column: span 7; }
+.c-calor { grid-column: span 5; }
+
+/* Mapa */
+.mapa { width: 100%; height: auto; display: block; }
+.mapa .costa { fill: none; stroke: #1E3A5F; stroke-width: 2; stroke-dasharray: 2 6; }
+.mapa .mar { fill: #3B6A9A; font-size: 11px; letter-spacing: .3em; }
+.mapa .ruta { stroke: #1C2740; stroke-width: 1.5; fill: none; }
+.nodo { cursor: pointer; }
+.nodo circle.base { stroke: var(--bg); stroke-width: 3; }
+.nodo text { fill: var(--fg-2); font-size: 12px; font-weight: 600; paint-order: stroke; stroke: var(--bg); stroke-width: 4px; }
+.nodo text.n { fill: var(--fg-3); font-size: 10px; font-family: var(--mono); font-weight: 500; }
+.nodo.sel circle.base { stroke: #fff; }
+.nodo .onda { fill: none; stroke-width: 2; opacity: 0; animation: onda 2.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes onda { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(2.6); } }
+.leyenda-mapa { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--fg-3); margin-top: 6px; }
+.leyenda-mapa span { display: inline-flex; align-items: center; gap: 6px; }
+.leyenda-mapa i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+/* KPI con anillo */
+.kpi-fila { display: flex; gap: 16px; align-items: center; }
+.anillo { position: relative; width: 112px; height: 112px; flex: none; }
+.anillo svg { transform: rotate(-90deg); }
+.anillo .v { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.anillo .v b { font-family: var(--mono); font-size: 24px; } .anillo .v small { color: var(--fg-3); font-size: 11px; }
+.mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; flex: 1; }
+.mini div { border-left: 3px solid var(--line-2); padding-left: 10px; }
+.mini b { display: block; font-family: var(--mono); font-size: 20px; }
+.mini small { color: var(--fg-3); font-size: 12px; }
+.mini .ok { border-color: var(--ok); } .mini .crit { border-color: var(--crit); } .mini .warn { border-color: var(--warn); } .mini .off { border-color: var(--off); }
+
+/* Actividad en vivo */
+.feed { display: flex; flex-direction: column; gap: 2px; overflow: auto; max-height: 560px; }
+.ev { display: grid; grid-template-columns: 14px 1fr; gap: 10px; padding: 9px 4px; border-bottom: 1px solid var(--line); }
+.ev .p { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; }
+.ev b { font-weight: 600; } .ev .q { color: var(--fg-3); font-size: 12px; }
+.ev.nuevo { animation: entra .5s ease-out; } @keyframes entra { from { background: rgba(59,130,246,.18); } }
+
+/* Lista de sedes */
+.filtros { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.chip { height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; font-size: 12px; cursor: pointer; color: var(--fg-2); }
+.chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+.filas { display: flex; flex-direction: column; gap: 4px; }
+.fila { display: grid; grid-template-columns: 10px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; border: 1px solid transparent; cursor: pointer; text-align: left; background: transparent; width: 100%; }
+.fila:hover { background: var(--panel-2); }
+.fila[aria-selected="true"] { background: var(--panel-2); border-color: var(--line-2); }
+.fila .s { width: 10px; height: 10px; border-radius: 50%; }
+.fila .nom { font-weight: 600; }
+.fila .sub { font-size: 12px; color: var(--fg-3); display: flex; gap: 8px; align-items: center; }
+.puntos { display: inline-flex; gap: 3px; }
+.puntos i { width: 7px; height: 7px; border-radius: 2px; display: inline-block; }
+.fila .der { text-align: right; font-size: 12px; color: var(--fg-3); }
+.fila .der b { display: block; font-family: var(--mono); font-size: 13px; color: var(--fg-2); }
+.tira { display: flex; gap: 1px; height: 6px; width: 120px; margin-top: 3px; }
+.tira i { flex: 1; border-radius: 1px; }
+
+/* Detalle de la sede seleccionada */
+.det-cab { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.det-cab h4 { margin: 0; font-size: 20px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pill.ok { background: var(--ok-bg); color: var(--ok-fg); } .pill.crit { background: var(--crit-bg); color: var(--crit-fg); }
+.pill.warn { background: var(--warn-bg); color: var(--warn-fg); } .pill.off { background: var(--off-bg); color: var(--off-fg); } .pill.info { background: var(--info-bg); color: var(--info-fg); }
+.det-datos { margin-left: auto; display: flex; gap: 18px; font-size: 12px; color: var(--fg-3); }
+.det-datos b { display: block; font-family: var(--mono); font-size: 14px; color: var(--fg); }
+.medidores { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.med { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--panel-2); border-top: 3px solid var(--ok); }
+.med.crit { border-top-color: var(--crit); background: linear-gradient(180deg, rgba(239,68,68,.12), var(--panel-2) 70%); }
+.med.off { border-top-color: var(--off); } .med.info { border-top-color: var(--info); }
+.med .inv { font-family: var(--mono); font-weight: 600; } .med .eq { font-size: 12px; color: var(--fg-3); }
+.med .est { margin-top: 6px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.med .kw { font-family: var(--mono); font-size: 18px; margin-top: 4px; }
+.med .kw small { font-size: 11px; color: var(--fg-3); }
+.med.crit .kw { color: var(--crit-fg); }
+
+/* Mapa de calor */
+.calor { display: grid; grid-template-columns: 110px repeat(7, 1fr); gap: 4px; font-size: 12px; align-items: center; }
+.calor .h { color: var(--fg-3); text-align: center; font-family: var(--mono); }
+.calor .n { color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.calor .c { height: 22px; border-radius: 4px; background: var(--muted); display: grid; place-items: center; font-family: var(--mono); font-size: 11px; color: var(--fg-3); }
+.calor .c.a { background: rgba(96,165,250,.25); color: var(--info-fg); } .calor .c.b { background: rgba(239,68,68,.35); color: #fff; font-weight: 600; }
+
+@media (max-width: 1280px) {
+  .c-mapa, .c-detalle { grid-column: span 12; } .c-kpi, .c-lista, .c-calor { grid-column: span 6; } .c-feed { grid-column: span 6; grid-row: auto; }
+  .estado { flex-wrap: wrap; } .pendientes { margin-left: 0; justify-content: flex-start; }
+}
+@media (max-width: 760px) { .bento > * { grid-column: span 12 !important; } main, .top { padding-left: 16px; padding-right: 16px; } .det-datos { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="marca-mockup">MOCKUP · DATOS DE EJEMPLO</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M2 8.8a15 15 0 0 1 4.2-2.6M10.7 5.1A15 15 0 0 1 22 8.8M5 12.9a10 10 0 0 1 5.2-2.7M19 12.9a10 10 0 0 0-1.9-1.4M12 20h.01"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3zM9 3v15M15 6v15"/></symbol>
+  <symbol id="i-act" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4M3.3 19a10 10 0 1 1 17.4 0"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="m17 2-5 5-5-5"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-gen" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="2"/><path d="M12 9l-2 4h4l-2 4"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="logo" aria-hidden="true"><svg class="icon"><use href="#i-zap"/></svg></div>
+  <div><h1>Centro de mando · Energía IGSS</h1><p>10 sedes · 57 medidores · lectura Modbus de los EBO</p></div>
+  <div class="der">
+    <span class="vivo" role="status"><i></i>En vivo · hace 3 s</span>
+    <button class="btn" type="button" id="btnTv"><svg class="icon"><use href="#i-tv"/></svg>Modo pantalla</button>
+  </div>
+</header>
+
+<main>
+  <!-- 1. Lo primero que ve el operador: ¿hay algo que atender? -->
+  <section class="estado" aria-labelledby="tEstado">
+    <div class="grande" aria-hidden="true"><svg class="icon"><use href="#i-alert"/></svg></div>
+    <div>
+      <h2 id="tEstado">2 sedes requieren atención</h2>
+      <p>8 sedes operando con normalidad · 55 de 57 medidores en línea · 1 evento crítico abierto</p>
+    </div>
+    <div class="pendientes">
+      <button class="pend crit" type="button" data-ir="escuintla"><span class="pill crit"><svg class="icon"><use href="#i-x"/></svg>Crítico</span><span><b>Escuintla · HES105 fuera de línea</b><small>ION7400-3 · Consulta Externa · hace 18 min</small></span></button>
+      <button class="pend off" type="button" data-ir="gomera"><span class="pill off"><svg class="icon"><use href="#i-wifi"/></svg>Sin respuesta</span><span><b>La Gomera no responde</b><small>sin respuesta en 8 s · hace 15 min</small></span></button>
+    </div>
+  </section>
+
+  <div class="bento">
+    <!-- 2. Mapa: ubica el problema de un vistazo -->
+    <section class="tile c-mapa" aria-labelledby="tMapa">
+      <h3 id="tMapa"><svg class="icon"><use href="#i-map"/></svg>Sedes en el mapa<span class="der">posiciones aproximadas</span></h3>
+      <svg class="mapa" id="mapa" viewBox="0 0 640 400" role="img" aria-label="Mapa de sedes con su estado"></svg>
+      <div class="leyenda-mapa"><span><i style="background:var(--ok)"></i>Operando</span><span><i style="background:var(--warn)"></i>Advertencia</span><span><i style="background:var(--crit)"></i>Crítico</span><span><i style="background:var(--off)"></i>Sin respuesta</span><span>Número = medidores en línea</span></div>
+    </section>
+
+    <!-- 3. Disponibilidad -->
+    <section class="tile c-kpi" aria-labelledby="tKpi">
+      <h3 id="tKpi"><svg class="icon"><use href="#i-gauge"/></svg>Disponibilidad</h3>
+      <div class="kpi-fila">
+        <div class="anillo" aria-label="96 por ciento de medidores en línea">
+          <svg width="112" height="112" viewBox="0 0 112 112"><circle cx="56" cy="56" r="46" fill="none" stroke="#1C2740" stroke-width="12"/><circle cx="56" cy="56" r="46" fill="none" stroke="#22C55E" stroke-width="12" stroke-linecap="round" stroke-dasharray="277 289"/></svg>
+          <div class="v"><b>96%</b><small>55/57 en línea</small></div>
+        </div>
+        <div class="mini">
+          <div class="ok"><b>8/10</b><small>sedes operando</small></div>
+          <div class="crit"><b>1</b><small>medidor fuera de línea</small></div>
+          <div class="off"><b>1</b><small>sede sin respuesta</small></div>
+          <div class="warn"><b>0</b><small>reconexiones (1 h)</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Actividad en vivo -->
+    <section class="tile c-feed" aria-labelledby="tFeed">
+      <h3 id="tFeed"><svg class="icon"><use href="#i-act"/></svg>Actividad en vivo<span class="der mono">7 días</span></h3>
+      <div class="feed" id="feed" aria-live="polite"></div>
+    </section>
+
+    <!-- 5. Sedes (selección) -->
+    <section class="tile c-lista" aria-labelledby="tLista">
+      <h3 id="tLista"><svg class="icon"><use href="#i-list"/></svg>Sedes<span class="der">disponibilidad 24 h</span></h3>
+      <div class="filtros" role="group" aria-label="Filtrar sedes">
+        <button class="chip" aria-pressed="true">Todas</button><button class="chip" aria-pressed="false">Con alertas</button><button class="chip" aria-pressed="false">Sin respuesta</button>
+      </div>
+      <div class="filas" id="filas" role="listbox" aria-label="Sedes"></div>
+    </section>
+
+    <!-- 6. Detalle de la sede seleccionada -->
+    <section class="tile c-detalle" aria-labelledby="detNombre">
+      <div class="det-cab">
+        <div><h4 id="detNombre">Escuintla</h4><div class="mono" style="font-size:12px;color:var(--fg-3)" id="detIp">10.0.6.33</div></div>
+        <span id="detPill"></span>
+        <div class="det-datos" id="detDatos"></div>
+        <a class="btn" href="#" onclick="return false"><svg class="icon"><use href="#i-ext"/></svg>Abrir panel</a>
+      </div>
+      <div class="medidores" id="medidores"></div>
+    </section>
+
+    <!-- 7. Patrón de eventos -->
+    <section class="tile c-calor" aria-labelledby="tCalor">
+      <h3 id="tCalor"><svg class="icon"><use href="#i-grid"/></svg>Eventos por día<span class="der">rojo = críticos</span></h3>
+      <div class="calor" id="calor"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+// Datos de ejemplo (estructura igual a la API real; dos sedes con problemas para mostrar los estados).
+const SEDES = [
+  { id: "gineco", n: "Gineco", ip: "10.0.2.33", lat: 14.60, lon: -90.53, nivel: "ok", m: 8 },
+  { id: "villanueva", n: "Villa Nueva", ip: "10.0.3.33", lat: 14.52, lon: -90.59, nivel: "ok", m: 7 },
+  { id: "amatitlan", n: "Amatitlán", ip: "10.0.4.33", lat: 14.47, lon: -90.63, nivel: "ok", m: 4 },
+  { id: "palin", n: "Palín", ip: "10.0.5.33", lat: 14.40, lon: -90.70, nivel: "ok", m: 4 },
+  { id: "escuintla", n: "Escuintla", ip: "10.0.6.33", lat: 14.30, lon: -90.79, nivel: "crit", m: 13, fuera: ["HES105"] },
+  { id: "santalucia", n: "Santa Lucía", ip: "10.0.8.33", lat: 14.33, lon: -91.02, nivel: "ok", m: 4 },
+  { id: "gomera", n: "La Gomera", ip: "10.0.7.33", lat: 14.08, lon: -91.05, nivel: "off", m: 4 },
+  { id: "tiquisate", n: "Tiquisate", ip: "10.0.9.33", lat: 14.28, lon: -91.36, nivel: "ok", m: 2 },
+  { id: "mazatenango", n: "Mazatenango", ip: "10.0.10.33", lat: 14.53, lon: -91.50, nivel: "ok", m: 7 },
+  { id: "retalhuleu", n: "Retalhuleu", ip: "10.0.11.33", lat: 14.54, lon: -91.68, nivel: "ok", m: 4, espera: ["HDR052"] }
+];
+const COLOR = { ok: "var(--ok)", warn: "var(--warn)", crit: "var(--crit)", off: "var(--off)" };
+const TXT = { ok: ["ok", "Operando", "i-check"], warn: ["warn", "Advertencia", "i-alert"], crit: ["crit", "Crítico", "i-x"], off: ["off", "Sin respuesta", "i-wifi"] };
+const ESC_MED = [
+  ["HES111","PM2130-1","Emergencia",112.4],["HES116","PM2130-2","Quirófanos",48.1],["HES117","PM2130-3","Quirófanos",51.9],["HES114","PM2130-4","Laboratorio",33.2],
+  ["HES112","PM2130-5","Banco de Sangre",21.7],["HES113","PM2130-6","Intensivos",64.0],["HES115","PM2130-7","Neonatología",27.5],["HES107","ION7400-1","Cuarto eléctrico",149.1],
+  ["HES108","ION7400-2","Cuarto eléctrico",129.3],["HES105","ION7400-3","Consulta Externa",0],["HES106","ION7400-4","Consulta Externa",14.2],["HES109","ION7400-5","Módulos",132.6],["HES110","ION7400-6","Módulos",95.0]
+];
+const FEED = [
+  ["crit", "Escuintla", "HES105 ION7400-3 fuera de línea", "hace 18 min", true],
+  ["off", "La Gomera", "La sede dejó de responder", "hace 15 min", true],
+  ["ok", "Escuintla", "HES108 ION7400-2 en línea de nuevo · duró 2 h 5 min", "ayer 14:31"],
+  ["info", "Retalhuleu", "HDR052 · generador apagado (en espera)", "ayer 22:51"],
+  ["warn", "Mazatenango", "Reconexiones frecuentes · corregido", "ayer 22:34"],
+  ["ok", "Escuintla", "HES107 ION7400-1 en línea de nuevo · duró 27 min", "19/10 15:51"],
+  ["crit", "Escuintla", "HES107 ION7400-1 fuera de línea", "19/10 15:24"],
+  ["warn", "Gineco", "Reconexiones frecuentes · corregido", "19/10 16:11"],
+  ["crit", "Escuintla", "HES108 ION7400-2 fuera de línea", "19/10 12:26"]
+];
+const DIAS = ["15/10","16/10","17/10","18/10","19/10","20/10","21/10"];
+const CALOR = { escuintla: [0,0,0,0,10,0,1], retalhuleu: [0,0,0,0,2,0,0], gineco: [0,0,0,0,1,0,0], mazatenango: [0,0,0,0,1,0,0], gomera: [0,0,0,0,0,0,1] };
+
+let sel = "escuintla";
+const $ = (s) => document.querySelector(s);
+const ico = (id) => `<svg class="icon" aria-hidden="true"><use href="#${id}"/></svg>`;
+const pill = (nivel) => { const [c, t, i] = TXT[nivel]; return `<span class="pill ${c}">${ico(i)}${t}</span>`; };
+
+function mapa() {
+  const x = (lon) => 40 + (lon + 91.78) / 1.35 * 560, y = (lat) => 40 + (14.72 - lat) / 0.75 * 320;
+  let h = `<path class="costa" d="M10 372 C 120 360, 220 352, 330 342 S 520 318, 630 300"/><text class="mar" x="140" y="392">OCÉANO PACÍFICO</text>`;
+  h += `<path class="ruta" d="M${x(-90.53)} ${y(14.60)} L${x(-90.59)} ${y(14.52)} L${x(-90.63)} ${y(14.47)} L${x(-90.70)} ${y(14.40)} L${x(-90.79)} ${y(14.30)} L${x(-91.02)} ${y(14.33)} L${x(-91.36)} ${y(14.28)} L${x(-91.50)} ${y(14.53)} L${x(-91.68)} ${y(14.54)}"/>`;
+  SEDES.forEach((s) => {
+    const cx = x(s.lon), cy = y(s.lat), c = COLOR[s.nivel];
+    const enLinea = s.m - (s.fuera?.length || 0) - (s.espera?.length || 0) - (s.nivel === "off" ? 0 : 0);
+    const alerta = s.nivel === "crit" || s.nivel === "off";
+    // Posición de la etiqueta por sede para que no se enciman: [dx, dy, anclaje]
+    const ETQ = { gineco: [18, 0, "start"], villanueva: [18, 0, "start"], amatitlan: [-18, 0, "end"], palin: [-18, 0, "end"], escuintla: [18, 0, "start"],
+      santalucia: [0, -38, "middle"], gomera: [18, 0, "start"], tiquisate: [0, 30, "middle"], mazatenango: [0, -38, "middle"], retalhuleu: [0, 30, "middle"] };
+    const [dx, dy, an] = ETQ[s.id];
+    h += `<g class="nodo${s.id === sel ? " sel" : ""}" data-id="${s.id}" tabindex="0" role="button" aria-label="${s.n}: ${TXT[s.nivel][1]}">
+      ${alerta ? `<circle class="onda" cx="${cx}" cy="${cy}" r="11" stroke="${c}"/>` : ""}
+      <circle class="base" cx="${cx}" cy="${cy}" r="${s.id === sel ? 13 : 11}" fill="${c}"/>
+      <text x="${cx + dx}" y="${cy + dy + 4}" text-anchor="${an}">${s.n}</text>
+      <text class="n" x="${cx + dx}" y="${cy + dy + 18}" text-anchor="${an}">${s.nivel === "off" ? "sin datos" : `${enLinea}/${s.m}`}</text>
+    </g>`;
+  });
+  $("#mapa").innerHTML = h;
+  document.querySelectorAll(".nodo").forEach((n) => { n.onclick = () => elegir(n.dataset.id); n.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); elegir(n.dataset.id); } }; });
+}
+
+function filas() {
+  const orden = { crit: 0, off: 1, warn: 2, ok: 3 };
+  $("#filas").innerHTML = SEDES.slice().sort((a, b) => orden[a.nivel] - orden[b.nivel] || a.n.localeCompare(b.n)).map((s) => {
+    const puntos = Array.from({ length: s.m }, (_, i) => {
+      const color = s.nivel === "off" ? "var(--off)" : (s.fuera && i === 9) ? "var(--crit)" : (s.espera && i === 2) ? "var(--off)" : "var(--ok)";
+      return `<i style="background:${color}"></i>`;
+    }).join("");
+    const tira = Array.from({ length: 24 }, (_, i) => {
+      let c = "var(--ok)";
+      if (s.id === "escuintla" && i >= 23) c = "var(--crit)";
+      if (s.id === "gomera" && i >= 23) c = "var(--off)";
+      return `<i style="background:${c};opacity:${.45 + i / 44}"></i>`;
+    }).join("");
+    return `<button class="fila" role="option" aria-selected="${s.id === sel}" data-id="${s.id}">
+      <span class="s" style="background:${COLOR[s.nivel]}"></span>
+      <span><span class="nom">${s.n}</span><span class="sub"><span class="puntos" aria-hidden="true">${puntos}</span></span><span class="tira" aria-hidden="true">${tira}</span></span>
+      <span class="der"><b>${s.nivel === "off" ? "—" : `${s.m - (s.fuera?.length || 0) - (s.espera?.length || 0)}/${s.m}`}</b>${s.nivel === "off" ? "sin respuesta" : "en línea"}</span>
+    </button>`;
+  }).join("");
+  document.querySelectorAll(".fila").forEach((f) => f.onclick = () => elegir(f.dataset.id));
+}
+
+function detalle() {
+  const s = SEDES.find((x) => x.id === sel);
+  $("#detNombre").textContent = s.n; $("#detIp").textContent = `${s.ip} · lectura del EBO ${s.nivel === "off" ? "sin datos" : "ok · hace 2 s"}`;
+  $("#detPill").innerHTML = pill(s.nivel);
+  $("#detDatos").innerHTML = s.nivel === "off"
+    ? `<span><b>8 s</b>sin respuesta</span><span><b>hace 15 min</b>última respuesta</span>`
+    : `<span><b>${s.m - (s.fuera?.length || 0) - (s.espera?.length || 0)}/${s.m}</b>en línea</span><span><b>0</b>reconexiones (1 h)</span><span><b>activo</b>correo</span><span><b>11 ms</b>respuesta</span>`;
+  const meds = s.id === "escuintla" ? ESC_MED : Array.from({ length: s.m }, (_, i) => [`${s.ip.split(".")[2]}-${i + 1}`, i < s.m - 1 ? `PM2130-${i + 1}` : "ION7400-1", "—", 20 + i * 7.3]);
+  $("#medidores").innerHTML = meds.map(([inv, eq, area, kw]) => {
+    const fuera = s.fuera?.includes(inv), espera = s.espera?.includes(inv) || (s.id === "retalhuleu" && inv.endsWith("-3"));
+    const cls = s.nivel === "off" ? "off" : fuera ? "crit" : espera ? "off" : "";
+    const est = s.nivel === "off" ? `${ico("i-wifi")}sin datos` : fuera ? `${ico("i-x")}Fuera de línea · 18 min` : espera ? `${ico("i-gen")}En espera · generador` : `${ico("i-check")}En línea`;
+    return `<div class="med ${cls}"><div class="inv">${inv}</div><div class="eq">${eq} · ${area}</div><div class="kw">${fuera || espera ? "0.0" : kw.toFixed(1)} <small>kW</small></div><div class="est" style="color:${fuera ? "var(--crit-fg)" : "var(--fg-3)"}">${est}</div></div>`;
+  }).join("");
+}
+
+function feed() {
+  const col = { crit: "var(--crit)", off: "var(--off)", ok: "var(--ok)", info: "var(--info)", warn: "var(--warn)" };
+  $("#feed").innerHTML = FEED.map(([t, sede, txt, cuando, nuevo]) => `<div class="ev${nuevo ? " nuevo" : ""}"><span class="p" style="background:${col[t]}"></span><div><b>${sede}</b> · ${txt}<div class="q mono">${cuando}</div></div></div>`).join("");
+}
+
+function calor() {
+  let h = `<span></span>${DIAS.map((d) => `<span class="h">${d}</span>`).join("")}`;
+  SEDES.slice().sort((a, b) => a.n.localeCompare(b.n)).forEach((s) => {
+    const v = CALOR[s.id] || [0,0,0,0,0,0,0];
+    h += `<span class="n">${s.n}</span>` + v.map((n, i) => `<span class="c ${n ? (["escuintla", "retalhuleu"].includes(s.id) && i === 4) || (s.id === "escuintla" && i === 6) ? "b" : "a" : ""}" title="${s.n} ${DIAS[i]}: ${n} eventos">${n || ""}</span>`).join("");
+  });
+  $("#calor").innerHTML = h;
+}
+
+function elegir(id) { sel = id; mapa(); filas(); detalle(); }
+document.querySelectorAll("[data-ir]").forEach((b) => b.onclick = () => elegir(b.dataset.ir));
+document.querySelectorAll(".chip").forEach((c) => c.onclick = () => document.querySelectorAll(".chip").forEach((x) => x.setAttribute("aria-pressed", String(x === c))));
+$("#btnTv").onclick = () => { $("#btnTv").classList.toggle("on"); };
+// Modo pantalla (demostración): recorre las sedes con problemas cada 8 s
+let tv; $("#btnTv").addEventListener("click", () => { clearInterval(tv); if ($("#btnTv").classList.contains("on")) { const ids = ["escuintla", "gomera"]; let i = 0; tv = setInterval(() => elegir(ids[i++ % ids.length]), 8000); } });
+
+mapa(); filas(); detalle(); feed(); calor();
+</script>
+</body>
+</html>

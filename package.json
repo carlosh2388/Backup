@@ -1,0 +1,29 @@
+{
+  "name": "chernandez",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "bacnet:bridge": "node bacnet/mqtt_to_bacnet_bridge.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.1.288",
+    "axios": "^1.15.0",
+    "bacstack": "^0.0.1-beta.14",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "modbus-serial": "^8.0.23",
+    "mqtt": "^5.14.1",
+    "mssql": "^10.0.4",
+    "pg": "^8.16.3"
+  },
+  "keywords": []
+}

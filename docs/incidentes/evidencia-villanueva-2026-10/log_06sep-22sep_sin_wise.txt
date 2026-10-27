@@ -1,0 +1,10 @@
+2026-09-07T17:09:30.308370568Z  Error actualizando V2: Port Not Open\n
+2026-09-07T17:09:30.308400101Z  Error actualizando V2: Port Not Open\n
+2026-09-21T22:16:01.608827611Z  Cerrando servicio...\n
+2026-09-21T22:16:01.91293278Z  [dotenv@17.2.3] injecting env (41) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops\n
+2026-09-21T22:16:02.354976789Z  MQTT deshabilitado por configuracion\n
+2026-09-21T22:16:02.360308961Z  🚀 API LISTA → http://10.0.9.33:3000\n
+2026-09-21T22:16:02.360887746Z  🚀 MODBUS AUTO APIKEY LISTA -\u003e http://0.0.0.0:3001\n
+2026-09-21T22:16:02.363561455Z  Modbus conectado a EBO-ASP-VILLA NUEVA 10.0.3.26 ID 1\n
+2026-09-21T22:16:02.374819762Z  ✔ Config WISE OK -\u003e 10.0.33.44:80\n
+2026-09-21T22:16:02.376102553Z  ✔ Config Modbus OK -\u003e 10.0.3.26:502\n

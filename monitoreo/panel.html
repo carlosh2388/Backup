@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monitoreo de eventos</title>
+<style>
+  :root {
+    --fondo: #EEF2F6; --tarjeta: #FFFFFF; --borde: #E2E8F0; --texto: #0F172A; --sec: #475569; --tenue: #94A3B8;
+    --marca: #0B2E59; --marca-suave: #E3EBF6;
+    --rojo: #C62828; --rojo-s: #FDECEA; --ambar: #B45309; --ambar-s: #FEF3C7; --verde: #15803D; --verde-s: #DCFCE7;
+    --azul: #1D4ED8; --azul-s: #E0EAFF; --gris-s: #F1F5F9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #0B1220; --tarjeta: #111A2C; --borde: #22304A; --texto: #E6EDF7; --sec: #A9B7CC; --tenue: #6B7C96;
+      --marca: #3B82F6; --marca-suave: #16243D;
+      --rojo-s: #3A1416; --ambar-s: #3A2A0E; --verde-s: #0E2E1C; --azul-s: #12224A; --gris-s: #162034;
+    }
+  }
+  :root[data-theme="dark"] {
+    --fondo: #0B1220; --tarjeta: #111A2C; --borde: #22304A; --texto: #E6EDF7; --sec: #A9B7CC; --tenue: #6B7C96;
+    --marca: #3B82F6; --marca-suave: #16243D;
+    --rojo-s: #3A1416; --ambar-s: #3A2A0E; --verde-s: #0E2E1C; --azul-s: #12224A; --gris-s: #162034;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fondo); color: var(--texto); font: 14px/1.45 "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  header { background: #0B2E59; color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 17px; margin: 0; letter-spacing: .02em; }
+  header .sub { color: #C7D7EE; font-size: 12px; }
+  header .der { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  button, select, input { font: inherit; }
+  .btn { border: 1px solid rgba(255,255,255,.35); background: transparent; color: #fff; padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+  .btn:hover { background: rgba(255,255,255,.1); }
+  .btn.prim { background: #fff; color: #0B2E59; border-color: #fff; font-weight: 600; }
+  main { max-width: 1280px; margin: 0 auto; padding: 18px 16px 40px; }
+  .rejilla { display: grid; gap: 14px; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 14px 16px; }
+  .kpi .et { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--tenue); text-transform: uppercase; }
+  .kpi .val { font-size: 26px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kpi .det { font-size: 12px; color: var(--sec); }
+  .estado-grande { display: flex; gap: 14px; align-items: center; }
+  .punto { width: 14px; height: 14px; border-radius: 50%; flex: none; box-shadow: 0 0 0 4px var(--gris-s); }
+  .pulso { animation: pulso 1.6s ease-out infinite; }
+  @keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(198,40,40,.45); } 100% { box-shadow: 0 0 0 12px rgba(198,40,40,0); } }
+  h2 { font-size: 12px; letter-spacing: .1em; color: var(--tenue); margin: 26px 0 10px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  h2 .cont { background: var(--gris-s); color: var(--sec); border-radius: 999px; padding: 1px 8px; font-size: 11px; letter-spacing: 0; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .05em; white-space: nowrap; }
+  .p-critico { background: var(--rojo-s); color: var(--rojo); } .p-advertencia { background: var(--ambar-s); color: var(--ambar); }
+  .p-info { background: var(--azul-s); color: var(--azul); } .p-ok { background: var(--verde-s); color: var(--verde); }
+  .p-gris { background: var(--gris-s); color: var(--sec); }
+  .medidores { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .med { border-left: 4px solid var(--verde); cursor: pointer; transition: transform .12s; }
+  .med:hover { transform: translateY(-1px); }
+  .med.mal { border-left-color: var(--rojo); } .med.adv { border-left-color: var(--ambar); }
+  .med .inv { font-weight: 800; font-size: 16px; } .med .nom { color: var(--sec); font-size: 12px; }
+  .med .pie { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--tenue); }
+  .abierto { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; border-left: 4px solid var(--rojo); }
+  .abierto.advertencia { border-left-color: var(--ambar); }
+  .abierto .t { font-weight: 700; } .abierto .d { color: var(--sec); font-size: 12px; }
+  .vacio { text-align: center; color: var(--tenue); padding: 22px; }
+  .filtros { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .filtros select, .filtros input { background: var(--tarjeta); color: var(--texto); border: 1px solid var(--borde); border-radius: 8px; padding: 7px 10px; }
+  .filtros input { min-width: 200px; }
+  .seg { display: inline-flex; border: 1px solid var(--borde); border-radius: 8px; overflow: hidden; }
+  .seg button { border: 0; background: var(--tarjeta); color: var(--sec); padding: 7px 12px; cursor: pointer; }
+  .seg button.act { background: var(--marca); color: #fff; }
+  .tabla-cont { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; letter-spacing: .06em; color: var(--tenue); text-transform: uppercase; padding: 8px 10px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+  tbody tr { cursor: pointer; } tbody tr:hover { background: var(--gris-s); }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .barras { display: flex; align-items: flex-end; gap: 4px; height: 70px; }
+  .barras .b { flex: 1; background: var(--marca-suave); border-radius: 3px 3px 0 0; position: relative; min-height: 2px; }
+  .barras .b span { position: absolute; inset: auto 0 0 0; background: var(--rojo); border-radius: 3px 3px 0 0; }
+  .ejes { display: flex; gap: 4px; font-size: 10px; color: var(--tenue); margin-top: 4px; } .ejes div { flex: 1; text-align: center; }
+  .panel-lateral { position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 100%); background: var(--tarjeta); border-left: 1px solid var(--borde); box-shadow: -10px 0 30px rgba(0,0,0,.15); transform: translateX(105%); transition: transform .2s; overflow-y: auto; z-index: 20; padding: 20px; }
+  .panel-lateral.abierto-pl { transform: none; }
+  .panel-lateral h3 { margin: 6px 0 2px; font-size: 20px; }
+  .kv { display: grid; grid-template-columns: 140px 1fr; gap: 6px 10px; margin-top: 14px; font-size: 13px; }
+  .kv div:nth-child(odd) { color: var(--tenue); }
+  pre { background: var(--gris-s); padding: 10px; border-radius: 8px; overflow-x: auto; font-size: 12px; }
+  .modal { position: fixed; inset: 0; background: rgba(2,8,23,.55); display: none; align-items: center; justify-content: center; z-index: 30; padding: 16px; }
+  .modal .caja { background: var(--tarjeta); border-radius: 14px; padding: 22px; width: min(420px, 100%); }
+  .modal input { width: 100%; padding: 10px; border: 1px solid var(--borde); border-radius: 8px; background: var(--fondo); color: var(--texto); margin: 10px 0; }
+  .aviso { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: #0F172A; color: #fff; padding: 10px 16px; border-radius: 10px; display: none; z-index: 40; max-width: 92vw; }
+  .refresco { font-size: 12px; color: #C7D7EE; }
+  @media (max-width: 640px) { .kv { grid-template-columns: 110px 1fr; } header .der { margin-left: 0; } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Monitoreo de eventos &middot; <span id="sede">—</span></h1>
+    <div class="sub">Lectura Modbus del EBO y medidores de energ&iacute;a (api-SIASA)</div>
+  </div>
+  <div class="der">
+    <span class="refresco" id="refresco">—</span>
+    <button class="btn" id="btnTema" title="Cambiar tema">&#9681;</button>
+    <button class="btn" id="btnVista">Vista previa del correo</button>
+    <button class="btn prim" id="btnPrueba">Enviar correo de prueba</button>
+  </div>
+</header>
+
+<main>
+  <section class="rejilla kpis">
+    <div class="tarjeta kpi">
+      <div class="et">Estado de la lectura</div>
+      <div class="estado-grande" style="margin-top:6px"><span class="punto" id="puntoEstado"></span><span class="val" id="estado" style="margin:0">—</span></div>
+      <div class="det" id="motivo">&nbsp;</div>
+    </div>
+    <div class="tarjeta kpi"><div class="et">&Uacute;ltima lectura buena</div><div class="val" id="antig">—</div><div class="det" id="ultimaOk">&nbsp;</div></div>
+    <div class="tarjeta kpi"><div class="et">Eventos abiertos</div><div class="val" id="kAbiertos">—</div><div class="det" id="kAbiertosDet">&nbsp;</div></div>
+    <div class="tarjeta kpi"><div class="et">Medidores en l&iacute;nea</div><div class="val" id="kMed">—</div><div class="det" id="kMedDet">&nbsp;</div></div>
+    <div class="tarjeta kpi"><div class="et">Reconexiones (1 h)</div><div class="val" id="kRec">—</div><div class="det" id="kDur">&nbsp;</div></div>
+    <div class="tarjeta kpi"><div class="et">Alertas por correo</div><div class="val" id="kCorreo" style="font-size:18px">—</div><div class="det" id="kBase">&nbsp;</div></div>
+  </section>
+
+  <h2>Eventos abiertos <span class="cont" id="cAbiertos">0</span></h2>
+  <section class="rejilla" id="abiertos"></section>
+
+  <h2>Medidores <span class="cont" id="cMed">0</span></h2>
+  <section class="rejilla medidores" id="medidores"></section>
+
+  <h2>Eventos por d&iacute;a <span class="cont" id="cRango">—</span></h2>
+  <section class="tarjeta">
+    <div class="barras" id="barras"></div>
+    <div class="ejes" id="ejes"></div>
+    <div style="font-size:11px;color:var(--tenue);margin-top:6px">Barra completa: todos los eventos del d&iacute;a. En rojo: los cr&iacute;ticos.</div>
+  </section>
+
+  <h2>Historial <span class="cont" id="cHist">0</span></h2>
+  <section class="tarjeta">
+    <div class="filtros">
+      <div class="seg" id="rango">
+        <button data-d="1">24 h</button><button data-d="7" class="act">7 d&iacute;as</button><button data-d="30">30 d&iacute;as</button><button data-d="90">90 d&iacute;as</button>
+      </div>
+      <select id="fSev"><option value="">Todas las severidades</option><option value="critico">Cr&iacute;tico</option><option value="advertencia">Advertencia</option><option value="info">Informativo</option></select>
+      <select id="fTipo"><option value="">Todos los eventos</option></select>
+      <select id="fEstado"><option value="">Abiertos y cerrados</option><option value="abierto">Solo abiertos</option><option value="cerrado">Solo cerrados</option></select>
+      <input id="fTexto" type="search" placeholder="Buscar medidor, inventario o c&oacute;digo">
+    </div>
+    <div class="tabla-cont">
+      <table>
+        <thead><tr><th>Inicio</th><th>Severidad</th><th>Evento</th><th>Dispositivo</th><th>Duraci&oacute;n</th><th>Estado</th><th>Correo</th></tr></thead>
+        <tbody id="historial"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<aside class="panel-lateral" id="lateral">
+  <button class="btn" style="color:var(--texto);border-color:var(--borde)" onclick="cerrarLateral()">Cerrar &times;</button>
+  <div id="lateralCont"></div>
+</aside>
+
+<div class="modal" id="modalClave">
+  <div class="caja">
+    <div style="font-weight:700;font-size:16px">API key de monitoreo</div>
+    <div style="color:var(--sec);font-size:13px;margin-top:4px">La misma de <code>/api/ebo/modbus-auto</code>. Se guarda solo en este navegador.</div>
+    <input id="inClave" type="password" placeholder="x-api-key">
+    <button class="btn prim" style="width:100%;color:#0B2E59;border-color:#0B2E59" id="btnClave">Entrar</button>
+  </div>
+</div>
+<div class="aviso" id="aviso"></div>
+
+<script>
+(function () {
+  "use strict";
+  const BASE = "/api/ebo/modbus-auto";
+  const REFRESCO_S = 15;
+  const NOMBRES = {
+    DATOS_CONGELADOS: "Datos congelados", LECTURA_ATASCADA: "Lectura atascada", VIGILANTE_REINICIO: "Reinicio del vigilante",
+    RECONEXIONES_FRECUENTES: "Reconexiones frecuentes", MEDIDOR_SIN_CAMBIO: "Medidor sin cambio",
+    MEDIDOR_FUERA_DE_LINEA: "Medidor fuera de línea", MEDIDOR_EN_CERO: "Voltaje en cero", API_REINICIADA: "API reiniciada"
+  };
+  const SEV = { critico: "Crítico", advertencia: "Advertencia", info: "Informativo" };
+  const EST = {
+    ok: ["OK", "var(--verde)"], iniciando: ["Iniciando", "var(--azul)"], lento: ["Lento", "var(--ambar)"],
+    degradado: ["Degradado", "var(--ambar)"], congelado: ["Congelado", "var(--rojo)"], sin_cambio: ["Sin cambio", "var(--rojo)"]
+  };
+
+  let clave = "";
+  try { clave = new URLSearchParams(location.search).get("key") || localStorage.getItem("siasa_api_key") || ""; } catch (_) {}
+  let rangoDias = 7, estado = null, eventos = [], cuenta = REFRESCO_S, ultimaOkMs = null;
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const fecha = (v) => v ? new Date(v).toLocaleString("es-GT", { dateStyle: "short", timeStyle: "medium" }) : "—";
+  const dur = (s) => {
+    if (s == null) return "—"; s = Math.max(0, Math.round(s));
+    const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+    return d ? `${d} d ${h} h` : h ? `${h} h ${m} min` : m ? `${m} min` : `${s} s`;
+  };
+  const hace = (v) => v ? `hace ${dur((Date.now() - new Date(v).getTime()) / 1000)}` : "—";
+  const pill = (sev) => `<span class="pill p-${sev || "gris"}">${esc(SEV[sev] || sev || "—")}</span>`;
+
+  function aviso(t, ms = 3500) { const a = $("aviso"); a.textContent = t; a.style.display = "block"; clearTimeout(aviso.t); aviso.t = setTimeout(() => (a.style.display = "none"), ms); }
+
+  async function api(ruta, opciones = {}) {
+    const r = await fetch(BASE + ruta, { ...opciones, headers: { "x-api-key": clave, ...(opciones.headers || {}) } });
+    if (r.status === 401 || r.status === 403) { pedirClave(); throw new Error("API key inválida"); }
+    if (!r.ok) throw new Error((await r.text()).slice(0, 200));
+    return r;
+  }
+
+  function pedirClave() { $("modalClave").style.display = "flex"; $("inClave").focus(); }
+  $("btnClave").onclick = () => {
+    clave = $("inClave").value.trim();
+    try { localStorage.setItem("siasa_api_key", clave); } catch (_) {}
+    $("modalClave").style.display = "none"; cargar();
+  };
+  $("inClave").addEventListener("keydown", (e) => { if (e.key === "Enter") $("btnClave").click(); });
+
+  // ---------- Estado ----------
+  function pintarEstado(e) {
+    $("sede").textContent = e.sede;
+    document.title = `Monitoreo · ${e.sede}`;
+    const [txt, color] = EST[e.estado] || [e.estado, "var(--sec)"];
+    $("estado").textContent = txt;
+    $("estado").style.color = color;
+    $("puntoEstado").style.background = color;
+    $("puntoEstado").classList.toggle("pulso", e.estado === "congelado" || e.estado === "sin_cambio");
+    $("motivo").textContent = e.motivo || (e.ultimo_error ? `Último error: ${e.ultimo_error}` : "Sin novedades");
+    ultimaOkMs = e.ultima_lectura_ok ? new Date(e.ultima_lectura_ok).getTime() : null;
+    $("ultimaOk").textContent = fecha(e.ultima_lectura_ok);
+    const crit = e.eventos_abiertos.filter((x) => x.severidad === "critico").length;
+    $("kAbiertos").textContent = e.eventos_abiertos.length;
+    $("kAbiertos").style.color = crit ? "var(--rojo)" : "";
+    $("kAbiertosDet").textContent = crit ? `${crit} crítico(s)` : "ninguno crítico";
+    const enLinea = e.dispositivos.filter((d) => d.estado !== "fuera_de_linea").length;
+    $("kMed").textContent = `${enLinea}/${e.dispositivos.length}`;
+    $("kMedDet").textContent = `${e.dispositivos.filter((d) => d.estado === "ok").length} sin novedades`;
+    $("kRec").textContent = e.reconexiones_ultima_hora;
+    $("kDur").textContent = e.duracion_ultima_lectura_ms != null ? `lectura de ${(e.duracion_ultima_lectura_ms / 1000).toFixed(1)} s` : "";
+    const correoActivo = /^activo/.test(e.correo);
+    $("kCorreo").innerHTML = correoActivo ? '<span class="pill p-ok">ACTIVO</span>' : '<span class="pill p-advertencia">DESACTIVADO</span>';
+    $("kBase").textContent = correoActivo ? `Base de eventos: ${e.base_de_eventos}` : e.correo.replace(/^desactivado:\s*/, "");
+    $("btnPrueba").disabled = !correoActivo;
+    $("btnPrueba").style.opacity = correoActivo ? 1 : .5;
+
+    $("cAbiertos").textContent = e.eventos_abiertos.length;
+    $("abiertos").innerHTML = e.eventos_abiertos.length ? e.eventos_abiertos.map((x) => `
+      <div class="tarjeta abierto ${esc(x.severidad)}" data-codigo="${esc(x.codigo)}">
+        ${pill(x.severidad)}
+        <div><div class="t">${esc(NOMBRES[x.evento] || x.evento)}${x.dispositivo ? ` · ${esc(x.inventario || "")} ${esc(x.dispositivo)}` : ""}</div>
+        <div class="d">Desde ${fecha(x.desde)} · ${esc(x.codigo)}</div></div>
+        <div class="num" style="font-weight:700">${hace(x.desde).replace("hace ", "")}</div>
+      </div>`).join("") : '<div class="tarjeta vacio">&#10004; Sin eventos abiertos</div>';
+
+    $("cMed").textContent = e.dispositivos.length;
+    $("medidores").innerHTML = e.dispositivos.map((d) => {
+      const clase = d.estado === "ok" ? "" : d.estado === "fuera_de_linea" || d.estado === "sin_cambio" || d.estado === "en_cero" ? "mal" : "adv";
+      const etq = { ok: ["EN LÍNEA", "ok"], fuera_de_linea: ["FUERA DE LÍNEA", "critico"], sin_cambio: ["SIN CAMBIO", "critico"], en_cero: ["EN CERO", "critico"] }[d.estado] || [d.estado, "gris"];
+      return `<div class="tarjeta med ${clase}" data-disp="${esc(d.nombre)}">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+          <div><div class="inv">${esc(d.inventario || d.nombre)}</div><div class="nom">${esc(d.nombre)}</div></div>
+          <span class="pill p-${etq[1]}">${etq[0]}</span>
+        </div>
+        <div class="pie"><span>${esc(d.area || "")}</span><span title="Último cambio de valores">&#8635; ${hace(d.ultimo_cambio)}</span></div>
+      </div>`;
+    }).join("");
+    document.querySelectorAll(".med").forEach((el) => el.onclick = () => { $("fTexto").value = el.dataset.disp; pintarHistorial(); $("historial").scrollIntoView({ behavior: "smooth", block: "start" }); });
+    document.querySelectorAll(".abierto").forEach((el) => el.onclick = () => abrirDetalle(el.dataset.codigo));
+  }
+
+  // ---------- Historial ----------
+  function filtrados() {
+    const sev = $("fSev").value, tipo = $("fTipo").value, est = $("fEstado").value, txt = $("fTexto").value.trim().toLowerCase();
+    return eventos.filter((e) =>
+      (!sev || e.severidad === sev) && (!tipo || e.evento === tipo) &&
+      (!est || (est === "abierto" ? !e.fin : !!e.fin)) &&
+      (!txt || [e.dispositivo, e.inventario, e.codigo, e.evento].some((v) => String(v || "").toLowerCase().includes(txt))));
+  }
+
+  function pintarHistorial() {
+    const lista = filtrados();
+    $("cHist").textContent = lista.length;
+    $("historial").innerHTML = lista.length ? lista.map((e) => {
+      const abiertoEv = !e.fin;
+      const d = abiertoEv ? (Date.now() - new Date(e.inicio).getTime()) / 1000 : e.duracion_s;
+      return `<tr data-codigo="${esc(e.codigo)}">
+        <td class="num">${fecha(e.inicio)}</td>
+        <td>${pill(e.severidad)}</td>
+        <td>${esc(NOMBRES[e.evento] || e.evento)}</td>
+        <td>${e.dispositivo ? `<b>${esc(e.inventario || "")}</b> ${esc(e.dispositivo)}` : '<span style="color:var(--tenue)">General</span>'}</td>
+        <td class="num">${dur(d)}</td>
+        <td>${abiertoEv ? '<span class="pill p-critico">ABIERTO</span>' : '<span class="pill p-ok">CERRADO</span>'}</td>
+        <td>${e.notificado_en ? `<span title="${fecha(e.notificado_en)}">&#9993; enviado</span>` : '<span style="color:var(--tenue)">—</span>'}</td>
+      </tr>`;
+    }).join("") : '<tr><td colspan="7" class="vacio">No hay eventos con estos filtros</td></tr>';
+    document.querySelectorAll("#historial tr[data-codigo]").forEach((tr) => tr.onclick = () => abrirDetalle(tr.dataset.codigo));
+  }
+
+  function pintarBarras() {
+    const dias = Math.min(rangoDias, 30);
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const cubos = [];
+    for (let i = dias - 1; i >= 0; i--) { const d = new Date(hoy); d.setDate(d.getDate() - i); cubos.push({ d, total: 0, crit: 0 }); }
+    eventos.forEach((e) => {
+      const t = new Date(e.inicio); t.setHours(0, 0, 0, 0);
+      const c = cubos.find((x) => x.d.getTime() === t.getTime());
+      if (c) { c.total++; if (e.severidad === "critico") c.crit++; }
+    });
+    const max = Math.max(1, ...cubos.map((c) => c.total));
+    $("cRango").textContent = `últimos ${dias} días`;
+    $("barras").innerHTML = cubos.map((c) => `<div class="b" style="height:${Math.max(3, c.total / max * 100)}%" title="${c.d.toLocaleDateString("es-GT")}: ${c.total} eventos, ${c.crit} críticos"><span style="height:${c.total ? c.crit / c.total * 100 : 0}%"></span></div>`).join("");
+    const paso = Math.ceil(dias / 10);
+    $("ejes").innerHTML = cubos.map((c, i) => `<div>${i % paso === 0 ? c.d.toLocaleDateString("es-GT", { day: "2-digit", month: "2-digit" }) : ""}</div>`).join("");
+  }
+
+  function abrirDetalle(codigo) {
+    const e = eventos.find((x) => x.codigo === codigo) || (estado?.eventos_abiertos || []).map((x) => ({ ...x, inicio: x.desde })).find((x) => x.codigo === codigo);
+    if (!e) return;
+    const det = e.detalle || {};
+    $("lateralCont").innerHTML = `
+      <div style="margin-top:14px">${pill(e.severidad)} ${e.fin ? '<span class="pill p-ok">CERRADO</span>' : '<span class="pill p-critico">ABIERTO</span>'}</div>
+      <h3>${esc(NOMBRES[e.evento] || e.evento)}</h3>
+      <div style="color:var(--sec)">${e.dispositivo ? `${esc(e.inventario || "")} ${esc(e.dispositivo)}` : "Lectura general del EBO"}</div>
+      <div class="kv">
+        <div>Código</div><div>${esc(e.codigo)}</div>
+        <div>Inicio</div><div>${fecha(e.inicio)}</div>
+        <div>Fin</div><div>${e.fin ? fecha(e.fin) : "sigue abierto"}</div>
+        <div>Duración</div><div>${dur(e.fin ? e.duracion_s : (Date.now() - new Date(e.inicio).getTime()) / 1000)}</div>
+        ${det.area ? `<div>Ubicación</div><div>${esc(det.area)}</div>` : ""}
+        ${det.mensaje ? `<div>Detalle</div><div>${esc(det.mensaje)}</div>` : ""}
+        ${det.causa ? `<div>Causa probable</div><div>${esc(det.causa)}</div>` : ""}
+        ${det.ultimo_error ? `<div>Último error</div><div>${esc(det.ultimo_error)}</div>` : ""}
+        <div>Correo</div><div>${e.notificado_en ? `enviado ${fecha(e.notificado_en)}` : "no enviado"}${e.cierre_notificado_en ? `<br>cierre ${fecha(e.cierre_notificado_en)}` : ""}</div>
+      </div>
+      <div style="margin-top:16px;font-size:12px;color:var(--tenue)">Datos completos</div>
+      <pre>${esc(JSON.stringify(det, null, 2))}</pre>`;
+    $("lateral").classList.add("abierto-pl");
+  }
+  window.cerrarLateral = () => $("lateral").classList.remove("abierto-pl");
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") window.cerrarLateral(); });
+
+  // ---------- Carga ----------
+  async function cargar() {
+    if (!clave) { pedirClave(); return; }
+    try {
+      const desde = new Date(Date.now() - rangoDias * 86400000).toISOString();
+      const [rEstado, rEventos] = await Promise.all([api("/estado"), api(`/eventos?desde=${encodeURIComponent(desde)}&limite=2000`)]);
+      estado = await rEstado.json();
+      const datos = await rEventos.json();
+      eventos = (datos.eventos || []).map((e) => ({ ...e, inicio: e.inicio || e.desde }));
+      const tipos = [...new Set(eventos.map((e) => e.evento))].sort();
+      const sel = $("fTipo"), actual = sel.value;
+      sel.innerHTML = '<option value="">Todos los eventos</option>' + tipos.map((t) => `<option value="${esc(t)}">${esc(NOMBRES[t] || t)}</option>`).join("");
+      sel.value = actual;
+      pintarEstado(estado); pintarHistorial(); pintarBarras();
+      cuenta = REFRESCO_S;
+    } catch (err) {
+      $("refresco").textContent = `Error: ${err.message}`;
+    }
+  }
+
+  setInterval(() => {
+    cuenta--;
+    if (ultimaOkMs) $("antig").textContent = dur((Date.now() - ultimaOkMs) / 1000);
+    if (cuenta <= 0) cargar();
+    else if (!/^Error/.test($("refresco").textContent) || cuenta % 5 === 0) $("refresco").textContent = `Actualiza en ${cuenta} s`;
+  }, 1000);
+
+  ["fSev", "fTipo", "fEstado"].forEach((id) => $(id).onchange = pintarHistorial);
+  $("fTexto").oninput = pintarHistorial;
+  document.querySelectorAll("#rango button").forEach((b) => b.onclick = () => {
+    document.querySelectorAll("#rango button").forEach((x) => x.classList.remove("act"));
+    b.classList.add("act"); rangoDias = Number(b.dataset.d); cargar();
+  });
+
+  $("btnPrueba").onclick = async () => {
+    if (!confirm("¿Enviar un correo de prueba a los destinatarios configurados?")) return;
+    try {
+      const r = await (await api("/alertas/prueba", { method: "POST" })).json();
+      aviso(r.enviado ? `Correo enviado a ${r.para}` : `No se envió: ${r.motivo || r.error}`, 6000);
+    } catch (err) { aviso(`Error: ${err.message}`, 6000); }
+  };
+  $("btnVista").onclick = async () => {
+    try {
+      const html = await (await api("/alertas/vista-previa")).text();
+      const w = window.open("", "_blank");
+      if (w) { w.document.open(); w.document.write(html); w.document.close(); } else aviso("El navegador bloqueó la ventana emergente");
+    } catch (err) { aviso(`Error: ${err.message}`, 6000); }
+  };
+  $("btnTema").onclick = () => {
+    const raiz = document.documentElement;
+    const oscuro = raiz.dataset.theme ? raiz.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    raiz.dataset.theme = oscuro ? "light" : "dark";
+    try { localStorage.setItem("siasa_tema", raiz.dataset.theme); } catch (_) {}
+  };
+  try { const t = localStorage.getItem("siasa_tema"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}
+
+  cargar();
+})();
+</script>
+</body>
+</html>

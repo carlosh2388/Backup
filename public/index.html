@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirigiendo...</title>
+</head>
+<body>
+
+<script>
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    // Ya autenticado
+    window.location.href = "/dashboard.html";
+  } else {
+    // No autenticado
+    window.location.href = "/login.html";
+  }
+</script>
+
+</body>
+</html>

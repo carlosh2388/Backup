@@ -1,0 +1,6 @@
+api_users_mqtt|0|0
+app_settings|0|0
+sensores_mqtt|505031|0
+---
+10049d6b3d036ed0734989eeb3bad6f7b3d62bb5d2cb56fca2dc4cacfde09467  node-api_log-completo_2026-04-21_a_2026-10-17.json.gz
+c75566de15d20f8db201a84698816a2a81e8d17544288a2feb663dd92ce5ca9c  node-api_sin-wise.json.gz

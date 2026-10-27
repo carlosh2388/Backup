@@ -1,0 +1,32 @@
+{
+  "analizador_1": {
+    "ts": 1780586872838,
+    "kwh": 236.59467258611116,
+    "source": "active_power_total_integral"
+  },
+  "analizador_2": {
+    "ts": 1780586872838,
+    "kwh": 275.90527818888893,
+    "source": "active_power_total_integral"
+  },
+  "analizador_3": {
+    "ts": 1780586872838,
+    "kwh": 171.12736455833334,
+    "source": "active_power_total_integral"
+  },
+  "analizador_4": {
+    "ts": 1780586872838,
+    "kwh": 21.811564763888885,
+    "source": "active_power_total_integral"
+  },
+  "analizador_5": {
+    "ts": 1780586872838,
+    "kwh": 212.64605983333334,
+    "source": "active_power_total_integral"
+  },
+  "analizador_6": {
+    "ts": 1780586872838,
+    "kwh": 120.788016475,
+    "source": "active_power_total_integral"
+  }
+}

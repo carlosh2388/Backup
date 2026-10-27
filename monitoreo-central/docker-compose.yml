@@ -1,0 +1,25 @@
+version: "3.9"
+
+# Monitoreo central de las sedes api-SIASA. Panel en http://<servidor>:8080
+services:
+  monitoreo-central:
+    build: .
+    image: siasa-monitoreo-central:latest
+    container_name: monitoreo-central
+    restart: always
+    # Usuario "api" del servidor: puede leer config/sedes.json (permiso 600, contiene las API keys)
+    user: "1000:1000"
+    ports:
+      - "8080:3000"
+    env_file: .env
+    environment:
+      CENTRAL_SEDES: /app/config/sedes.json
+      CENTRAL_DATOS: /app/data/historial.json
+    volumes:
+      - ./config:/app/config:ro
+      - ./data:/app/data          # historial de 24 h y actividad propia (sobrevive a reinicios)
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"

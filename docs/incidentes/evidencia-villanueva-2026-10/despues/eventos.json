@@ -1,0 +1,1 @@
+{"origen":"base de datos","total":1,"eventos":[{"codigo":"VNU-20261017-044631-3ac0","sede":"Villa Nueva","evento":"API_REINICIADA","severidad":"info","dispositivo":null,"inventario":null,"inicio":"2026-10-17T04:46:31.931Z","fin":"2026-10-17T04:46:31.931Z","duracion_s":0,"detalle":{"mensaje":"La API arrancó."},"notificado_en":null,"cierre_notificado_en":null}]}

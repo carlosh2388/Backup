@@ -1,0 +1,7 @@
+node_modules
+.next
+config
+.env
+.env.*
+*.log
+README.md
